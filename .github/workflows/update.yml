@@ -5,23 +5,25 @@ on:
     - cron: "0 */12 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-playlist:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Download playlists
+      - name: Merge playlists
         run: |
           curl -L https://iptv-org.github.io/iptv/index.country.m3u > arab-country.m3u
           curl -L https://iptv-org.github.io/iptv/regions/arab.m3u >> arab-country.m3u
 
-      - name: Commit updated playlist
+      - name: Commit
         run: |
           git config --global user.name "iptv-bot"
           git config --global user.email "bot@github.com"
           git add arab-country.m3u
-          git commit -m "Update IPTV playlist" || echo "No changes"
+          git commit -m "update playlist" || echo "no changes"
           git push
